@@ -18,7 +18,7 @@ class ThingImagesController < ApplicationController
   def image_things
     authorize @image, :get_things?
     @thing_images=@image.thing_images.prioritized.with_name
-    render :index 
+    render :index
   end
 
   def linkable_things
@@ -50,6 +50,7 @@ class ThingImagesController < ApplicationController
         .with_position
       @thing_images=@thing_images.things    if subject && subject.downcase=="thing"
       @thing_images=ThingImage.with_distance(@origin, @thing_images) if distance.downcase=="true"
+      @thing_images=@thing_images.tagged(params[:tag]) if params[:tag]
       render "thing_images/index"
     end
   end
