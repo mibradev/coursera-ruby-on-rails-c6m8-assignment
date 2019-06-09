@@ -24,6 +24,13 @@ class ThingImage < ActiveRecord::Base
     return scope
   }
 
+  def self.tagged(tag)
+    with_thing
+    .joins("join tags_things on things.id = tags_things.thing_id")
+    .joins("join tags on tags.id = tags_things.tag_id")
+    .where("tags.name = ?", tag)
+  end
+
   def self.with_distance(origin, scope)
     scope.select("-1.0 as distance").with_position
          .each {|ti| ti.distance = ti.distance_from(origin) }
@@ -36,8 +43,8 @@ class ThingImage < ActiveRecord::Base
     m3=ThingImage.maximum(:updated_at)
     [m1,m2,m3].max
 =end
-    unions=[Thing,Image,ThingImage].map {|t| 
-              "select max(updated_at) as modified from #{t.table_name}\n" 
+    unions=[Thing,Image,ThingImage].map {|t|
+              "select max(updated_at) as modified from #{t.table_name}\n"
             }.join(" union\n")
     sql   ="select max(modified) as last_modified from (\n#{unions}) as x"
     value=connection.select_value(sql)

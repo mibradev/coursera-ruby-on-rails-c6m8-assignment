@@ -369,8 +369,13 @@ Work up a sweat in our 24-hour StayFit Gym, which features Life Fitness® cardio
      }
     create_image organizer, image
 
+    tag1 = Tag.create! name: "beautiful"
+    tag2 = Tag.create! name: "ugly"
+    Thing.find_each { |thing| thing.tags << [tag1, tag2].sample }
+
     puts "#{Thing.count} things created and #{ThingImage.count("distinct thing_id")} with images"
     puts "#{Image.count} images created and #{ThingImage.count("distinct image_id")} for things"
+    puts "#{Tag.count} tags created and linked with things"
   end
 
 end
