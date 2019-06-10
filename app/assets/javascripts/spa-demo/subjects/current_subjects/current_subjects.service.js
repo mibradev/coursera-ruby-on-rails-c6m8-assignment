@@ -30,7 +30,7 @@
     $rootScope.$watch(function(){ return currentOrigin.getVersion(); }, refresh);
     return;
     ////////////////
-    function refresh() {      
+    function refresh() {
       var params=currentOrigin.getPosition();
       if (!params || !params.lng || !params.lat) {
         params=angular.copy(APP_CONFIG.default_position);
@@ -44,13 +44,15 @@
       params["order"]="ASC";
       console.log("refresh",params);
 
+      if (service.tag) params["tag"] = service.tag;
+
       var p1=refreshImages(params);
-      params["subject"]="thing";      
+      params["subject"]="thing";
       var p2=refreshThings(params);
       $q.all([p1,p2]).then(
         function(){
           service.setCurrentImageForCurrentThing();
-        });      
+        });
     }
 
     function refreshImages(params) {
@@ -93,7 +95,7 @@
         service.setCurrentThing(service.thingIdx + 1);
       } else if (service.things.length >= 1) {
         service.setCurrentThing(0);
-      }    
+      }
     }
     function previousThing() {
       if (service.thingIdx !== null) {
@@ -101,7 +103,7 @@
       } else if (service.things.length >= 1) {
         service.setCurrentThing(service.things.length-1);
       }
-    }    
+    }
   }
 
   CurrentSubjects.prototype.getVersion = function() {
@@ -181,7 +183,7 @@
             break;
           }
         }
-      }      
+      }
     }
   }
 
@@ -213,7 +215,7 @@
       }
     }
     if (!found) {
-      this.setCurrentImage(null, true);      
+      this.setCurrentImage(null, true);
     }
   }
   CurrentSubjects.prototype.setCurrentThingId = function(thing_id, skipImage) {
@@ -228,13 +230,18 @@
       }
     }
     if (!found) {
-      this.setCurrentThing(null, true);      
-    }    
+      this.setCurrentThing(null, true);
+    }
   }
   CurrentSubjects.prototype.setCurrentSubjectId = function(thing_id, image_id) {
     console.log("setCurrentSubject", thing_id, image_id);
     this.setCurrentThingId(thing_id, true);
     this.setCurrentImageId(image_id, true);
+  }
+
+  CurrentSubjects.prototype.search = function(tag) {
+    this.tag = tag;
+    this.refresh();
   }
 
 

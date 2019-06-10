@@ -16,11 +16,11 @@
   thingsTemplateUrl.$inject = ["spa-demo.config.APP_CONFIG"];
   function thingsTemplateUrl(APP_CONFIG) {
     return APP_CONFIG.current_things_html;
-  }    
+  }
   thingInfoTemplateUrl.$inject = ["spa-demo.config.APP_CONFIG"];
   function thingInfoTemplateUrl(APP_CONFIG) {
     return APP_CONFIG.current_thing_info_html;
-  }    
+  }
 
   CurrentThingsController.$inject = ["$scope",
                                      "spa-demo.subjects.currentSubjects"];
@@ -28,21 +28,26 @@
     var vm=this;
     vm.thingClicked = thingClicked;
     vm.isCurrentThing = currentSubjects.isCurrentThingIndex;
+    vm.search = search;
 
     vm.$onInit = function() {
       console.log("CurrentThingsController",$scope);
     }
     vm.$postLink = function() {
       $scope.$watch(
-        function() { return currentSubjects.getThings(); }, 
+        function() { return currentSubjects.getThings(); },
         function(things) { vm.things = things; }
       );
-    }    
+    }
     return;
     //////////////
     function thingClicked(index) {
       currentSubjects.setCurrentThing(index);
-    }    
+    }
+
+    function search() {
+      currentSubjects.search(vm.tag)
+    }
   }
 
   CurrentThingInfoController.$inject = ["$scope",
@@ -59,18 +64,18 @@
     }
     vm.$postLink = function() {
       $scope.$watch(
-        function() { return currentSubjects.getCurrentThing(); }, 
-        newThing 
+        function() { return currentSubjects.getCurrentThing(); },
+        newThing
       );
       $scope.$watch(
         function() { return Authz.getAuthorizedUserId(); },
         function() { newThing(currentSubjects.getCurrentThing()); }
-      );        
-    }    
+      );
+    }
     return;
     //////////////
     function newThing(link) {
-      vm.link = link; 
+      vm.link = link;
       vm.thing = null;
       if (link && link.thing_id) {
         vm.thing=Thing.get({id:link.thing_id});
