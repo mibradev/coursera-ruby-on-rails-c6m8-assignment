@@ -34,7 +34,9 @@
           vm.thing = newValues[0];
 
           if (vm.thing) {
-            vm.images = newValues[1].filter(ti => ti.thing_id === vm.thing.thing_id);
+            vm.images = newValues[1].filter(function(ti) {
+              return ti.thing_id === vm.thing.thing_id;
+            });
             displaySubjects();
           }
         });
